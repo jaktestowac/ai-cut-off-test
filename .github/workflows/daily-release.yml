@@ -1,0 +1,37 @@
+name: Daily Mock Release
+
+on:
+  schedule:
+    - cron: '0 0 * * *'
+
+jobs:
+  create-release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+
+      - name: Generate version number
+        id: version
+        run: echo "::set-output name=version::$(date +'%Y.%m.%d')"
+
+      - name: Generate release notes
+        id: notes
+        run: |
+          npm install faker
+          echo "::set-output name=notes::$(npx faker.lorem.paragraphs 3)%0A%0A%0A$(date +'%B %d, %Y')"
+
+      - name: Create release
+        uses: peter-evans/create-release@v1
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          tag_name: ${{ steps.version.outputs.version }}
+          name: ${{ steps.version.outputs.version }}
+          body: ${{ steps.notes.outputs.notes }}
+          draft: false
+          prerelease: false
