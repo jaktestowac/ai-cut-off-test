@@ -1,6 +1,6 @@
 name: Daily Mock Release
 
-# on:
+on: push
 #   schedule:
 #     - cron: '*/6 * * * *'
 
