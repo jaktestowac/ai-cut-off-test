@@ -27,7 +27,7 @@ jobs:
           echo "::set-output name=notes::$(npx faker.lorem.paragraphs 3)%0A%0A%0A$(date +'%B %d, %Y')"
 
       - name: Create release
-        uses: peter-evans/create-release@v1
+        uses: actions/create-release@v1
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           tag_name: ${{ steps.version.outputs.version }}
