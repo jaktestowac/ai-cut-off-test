@@ -18,20 +18,21 @@ jobs:
 
       - name: Generate version number
         id: version
-        run: echo "::set-output name=version::$(date +'%Y.%m.%d')"
+        run: echo "version=$(date +'%Y.%m.%d')" >> $GITHUB_OUTPUT
 
       - name: Generate release notes
         id: notes
         run: |
           npm install faker
-          echo "::set-output name=notes::$(npx faker.lorem.paragraphs 3)%0A%0A%0A$(date +'%B %d, %Y')"
+          echo "notes=$(npx faker.lorem.paragraphs 3)%0A%0A%0A$(date +'%B %d, %Y')" >> $GITHUB_OUTPUT
 
       - name: Create release
         uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} 
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
           tag_name: ${{ steps.version.outputs.version }}
-          name: ${{ steps.version.outputs.version }}
+          release_name: ${{ steps.version.outputs.version }}
           body: ${{ steps.notes.outputs.notes }}
           draft: false
           prerelease: false
