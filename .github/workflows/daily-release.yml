@@ -1,0 +1,44 @@
+name: Daily Mock Release
+
+on:
+  schedule:
+    - cron: '0 0 * * *'
+
+jobs:
+  create-release:
+    permissions:
+      contents: write
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+
+      - name: Generate version number
+        id: version
+        run: echo "version=$(date +'%Y.%m.%d')" >> $GITHUB_OUTPUT
+
+      - name: Generate release notes
+        id: notes
+        run: |
+          adjectives=('happy' 'sad' 'angry' 'tired' 'excited' 'funny' 'silly' 'crazy' 'lazy' 'lucky')
+          nouns=('cat' 'dog' 'bird' 'fish' 'rabbit' 'hamster' 'snake' 'turtle' 'spider' 'lion')
+          adj="${adjectives[$RANDOM % ${#adjectives[@]}]}"
+          noun="${nouns[$RANDOM % ${#nouns[@]}]}"
+          name="${adj}-${noun}"
+          echo "notes=$(echo $name $(date +'%B %d, %Y'))" >> $GITHUB_OUTPUT
+
+      - name: Create release
+        uses: ncipollo/release-action@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} 
+        with:
+          tag: ${{ steps.version.outputs.version }}
+          name: ${{ steps.version.outputs.version }}
+          body: ${{ steps.notes.outputs.notes }}
+          replacesArtifacts: false
+          removeArtifacts: true
