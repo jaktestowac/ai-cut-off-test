@@ -30,7 +30,7 @@ jobs:
           adj="${adjectives[$RANDOM % ${#adjectives[@]}]}"
           noun="${nouns[$RANDOM % ${#nouns[@]}]}"
           name="${adj}-${noun}"
-          echo "notes=$($name $(date +'%B %d, %Y')" >> $GITHUB_OUTPUT
+          echo "notes=$($name $(date +'%B %d, %Y'))" >> $GITHUB_OUTPUT
 
       - name: Create release
         uses: ncipollo/release-action@v1
