@@ -25,16 +25,17 @@ jobs:
       - name: Generate release notes
         id: notes
         run: |
-          npm install faker
-          echo "notes=$(npx faker.lorem.paragraphs 3)%0A%0A%0A$(date +'%B %d, %Y')" >> $GITHUB_OUTPUT
+          adjectives=('happy' 'sad' 'angry' 'tired' 'excited' 'funny' 'silly' 'crazy' 'lazy' 'lucky')
+          nouns=('cat' 'dog' 'bird' 'fish' 'rabbit' 'hamster' 'snake' 'turtle' 'spider' 'lion')
+          adj="${adjectives[$RANDOM % ${#adjectives[@]}]}"
+          noun="${nouns[$RANDOM % ${#nouns[@]}]}"
+          name="${adj}-${noun}"
+          echo "notes=$($name $(date +'%B %d, %Y')" >> $GITHUB_OUTPUT
 
       - name: Create release
-        uses: actions/create-release@v1
+        uses: ncipollo/release-action@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} 
         with:
-          tag_name: ${{ steps.version.outputs.version }}
-          release_name: ${{ steps.version.outputs.version }}
+          tag: ${{ steps.version.outputs.version }}
           body: ${{ steps.notes.outputs.notes }}
-          draft: false
-          prerelease: false
